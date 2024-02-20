@@ -50,27 +50,89 @@ public class Deck
     {
         try
         {
-            // var group = cards.GroupBy(card => card.val);
-            // bool? res = group.Any(group => group.Count() == 3);
-            
             //return hand.GroupBy(card => card.suit).Any(group => group.Count() == 5);
             
             // distinct and count - by mub
             //return hand.GroupBy(hand => hand.suit).Count() == 1;
 
-            return (from card in Cards
-                    group card by card.suit into g
-                    select g).Count() == 1;
+            //return (from card in Cards
+            //        group card by card.suit into g
+            //        select g).Count() == 1;
 
+            return hand.Select(hand => hand.suit).Distinct().Count() == 1;
 
-            return hand.All(hand => hand.suit == "♥") || hand.All(hand => hand.suit == "♦")
-                || hand.All(hand => hand.suit == "♦") || hand.All(hand => hand.suit == "♣");
+            //return hand.All(hand => hand.suit == "♥") || hand.All(hand => hand.suit == "♦")
+            //    || hand.All(hand => hand.suit == "♦") || hand.All(hand => hand.suit == "♣");
         }
         catch (Exception ex)
         {
             Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
             return null;
         }
+    }
+
+    // what is a straight flush?  it's a flush and a straight.
+    // build a IsStraight method
+    public bool? IsStraightFlush(List<Card> hand)
+    {
+        try
+        {
+            return (bool)IsFlush(hand)! && (bool)IsStraight(hand)!;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
+            return null;
+        }
+    }
+
+    public int? HighCard(List<Card> hand)
+    {
+        try {
+            return hand.Select(suit => suit.val).Max();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
+            return null;
+        }
+    }
+
+    public bool? IsRoyalFlush(List<Card> hand)
+    {
+        try
+        {
+            bool? result = IsStraightFlush(hand);
+            int? hcresult = HighCard(hand);
+
+            if (result is not null && hcresult is not null)
+            {
+                return (bool)result && hcresult == 14;
+            } else
+            {
+                return null;
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
+            return null;
+        }
+    }
+
+    // IsStraight
+    public bool? IsStraight(List<Card> hand) // 2, 3, 4, 5, 6
+    {
+        // sort it and if you're not incrementing more than one each time
+        var sortedHand = hand.OrderBy(card => card.val)
+                            .Select(card => card.val)
+                            .ToList();
+
+        // check the sequence of the sorted hand using linq
+        return sortedHand.Zip(sortedHand
+                            .Skip(1), (a, b) => b - a)
+                            .All(x => x == 1);
     }
 
     public bool? CheckForFourAces(List<Card> hand)
