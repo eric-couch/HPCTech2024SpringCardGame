@@ -17,6 +17,36 @@ public class Deck
         ResetDeck();
     }
 
+    public bool CheckForAce(List<Card> cards)
+    {
+        return cards.Exists(card => card.rank == "A");
+    }
+
+    public bool? CheckForThreeOfAKind(List<Card> cards)
+    {
+        //return (from card 
+        //        in cards 
+        //        group card by card.rank into g
+        //        select new {rank = g.Key, count = g.Count() }).Any(c => c.count == 3);
+        try
+        {
+            var group = cards.GroupBy(card => card.val);
+            // group is a GroupedEnumerable, which is part of the System.Linq library.  It implements the IGrouping 
+            // interface.  Each item in the GroupedEnumerable is a dictionary object with the number of items equal to 
+            // the group.  so, in this case if you DO have three of a kind, one of the groups is dictionary with 
+            // all three cards.  Each dictionary in this case has a key, and a card
+            bool? res = group.Any(group => group.Count() == 3);
+
+            return res;
+        } catch (Exception ex)
+        {
+            Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
+            return null;
+        }
+
+
+    }
+
     public List<Card> DealCards(int numOfCards)
     {
         List<Card> dealtCards = new List<Card>();

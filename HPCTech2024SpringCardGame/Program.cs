@@ -13,7 +13,19 @@
             foreach (Card card in hand)
             {
                 Console.Write($"{card.ToString()} ");
+                Console.WriteLine();
             }
+
+            bool? checkForThreeOfAKind = deck.CheckForThreeOfAKind(hand);
+            if (checkForThreeOfAKind != null)
+            {
+                Console.WriteLine($"Checking for three of a kind: {((bool)checkForThreeOfAKind ? "true" : "false")}");
+            } else
+            {
+                return;
+            }
+
         }
     }
+
 }
