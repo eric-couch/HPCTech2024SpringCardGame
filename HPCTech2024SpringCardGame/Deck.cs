@@ -43,8 +43,39 @@ public class Deck
             Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
             return null;
         }
+    }
+
+    // Check for flush.  Flush is all five cards are same suit
+    public bool? IsFlush(List<Card> hand)
+    {
+        try
+        {
+            // var group = cards.GroupBy(card => card.val);
+            // bool? res = group.Any(group => group.Count() == 3);
+            
+            //return hand.GroupBy(card => card.suit).Any(group => group.Count() == 5);
+            
+            // distinct and count - by mub
+            //return hand.GroupBy(hand => hand.suit).Count() == 1;
+
+            return (from card in Cards
+                    group card by card.suit into g
+                    select g).Count() == 1;
 
 
+            return hand.All(hand => hand.suit == "♥") || hand.All(hand => hand.suit == "♦")
+                || hand.All(hand => hand.suit == "♦") || hand.All(hand => hand.suit == "♣");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured.  Error Message: {0}", ex.Message);
+            return null;
+        }
+    }
+
+    public bool? CheckForFourAces(List<Card> hand)
+    {
+        return hand.All(hand => hand.rank == "A");
     }
 
     public List<Card> DealCards(int numOfCards)
